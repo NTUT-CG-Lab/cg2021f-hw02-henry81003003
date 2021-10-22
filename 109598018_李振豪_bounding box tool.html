@@ -205,6 +205,7 @@
 				const keys = [];
 
 				const poses = gui.addFolder('Poses');
+				const models = gui.addFolder('Models');
 				const morphs = gui.addFolder('Morphs');
 
 				function getBaseName(s) {
@@ -217,6 +218,7 @@
 					}
 
 					controls.pose = - 1;
+					controls.models = -1;
 
 					for (let i = 0; i < vpdFiles.length; i++) {
 						controls[getBaseName(vpdFiles[i])] = false;
@@ -226,6 +228,21 @@
 				function initKeys() {
 					for (const key in dictionary) {
 						keys.push(key);
+					}
+				}
+
+				function initModels() {
+					const md_files = { default : -1 };
+					for (let id=0; id<modelFile.length;id++) {
+						md_files[getBaseName(modelFile[id])] = id;
+					}
+					models.add(controls, 'models', md_files).onChange(onChangeModel);
+				}
+
+				function onChangeModel() {
+					const index = parseInt(controls.models);
+					if (index != -1) {
+						read_MMD(index);
 					}
 				}
 
@@ -266,11 +283,13 @@
 
 				initControls();
 				initKeys();
+				initModels();
 				initPoses();
 				initMorphs();
 
 				onChangeMorph();
 				onChangePose();
+				onChangeModel();
 
 				poses.open();
 				morphs.open();
